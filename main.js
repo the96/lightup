@@ -13,7 +13,7 @@ async function loadFilenames(memberName) {
 // 3_その他,ばか.mp3
 // 1_あいさつ,ぱにゃにゃんだー.mp3
 // 1_あいさつ,みなのしゅぱにゃにゃんだー.mp3
-// 2_かわいい,みぷちおねえさんだよ.mp3
+// 2_おねえさん,みぷちおねえさんだよ.mp3
 // 1_あいさつ,よろしくおねがいしまーす.mp3
 // 1_あいさつ,スーパーチャットありがとうございます.mp3
 // 1_あいさつ,雑談リレー務めさせていただきます.mp3
@@ -41,6 +41,11 @@ async function loadFilenames(memberName) {
   return result;
 }
 
+function getVolume() {
+  const volume = document.getElementById('volume').value;
+  return volume ?? 0.3;
+}
+
 function createButtons(memberName, categoryToFilenames) {
   var container = document.getElementById('buttons');
   keys = Object.keys(categoryToFilenames);
@@ -61,19 +66,18 @@ function createButtons(memberName, categoryToFilenames) {
       button.textContent = filename.replace('.mp3', '');
       button.onclick = function() {
         path = `${FILE_PREFIX}/${memberName}/${filename}`
-        console.log(path);
         var audio = new Audio(path);
+        audio.volume = getVolume();
         audio.play();
       };
       container.appendChild(button);
     });
   });
-
 }
 
 async function loadMembers() {
 //   const text = `
-// mipu,甘苺みぷ  
+// mipu,甘苺みぷ,@amaimipu,@AmaiMipu
 // `
   const text = await fetch(`members.csv`).then(res => res.text());
   const lines = text
@@ -85,14 +89,15 @@ async function loadMembers() {
   const result = {};
 
   for (const line of lines) {
-    const [key, member] = line.split(",").map(s => s.trim());
+    const [key, name, x, youtube] = line.split(",").map(s => s.trim());
 
-    if (!key || !member) continue;
-
-    if (!result[key]) {
-      result[key] = [];
+    if (!key || !name) continue;
+    if (result[key]) {
+      console.error(`Duplicate member key: ${key}`);
+      continue;
     }
-    result[key].push(member);
+
+    result[key] = {name, x, youtube};
   }
 
   return result;
@@ -101,22 +106,21 @@ async function loadMembers() {
 function createMemberLink(keyToMember) {
   var container = document.getElementById('members');
   Object.keys(keyToMember).forEach((key) => {    
-    var members = keyToMember[key];
-    members.forEach((member) => {
-      var li = document.createElement('li');
-      container.appendChild(li);
+    var member = keyToMember[key]['name'];
+    var li = document.createElement('li');
+    container.appendChild(li);
 
-      var link = document.createElement('a');
-      link.href = `index.html?member=${key}`;
-      link.textContent = member;
-      li.appendChild(link);
-    });
+    var link = document.createElement('a');
+    link.href = `index.html?member=${key}`;
+    link.textContent = member;
+    li.appendChild(link);
   });
 }
 
-function getMemberKey() {
+function getMemberKey(memberKeys) {
   const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('member');
+  const key = urlParams.get('member');
+  return memberKeys.includes(key) ? key : null;
 }
 
 function hideMemberContent() {
@@ -124,16 +128,44 @@ function hideMemberContent() {
   container.style.display = 'none';
 }
 
+function setMemberName(name) {
+  var container = document.getElementById('name');
+  container.textContent = name;
+}
+
+// {name, x, youtube}
+function createLinks(member) {
+  name = member['name'];
+  x = member['x'];
+  youtube = member['youtube'];
+
+  var container = document.getElementById('links');
+  var xListItem = document.createElement('li');
+  var xLink = document.createElement('a');
+  xLink.href = `https://x.com/${x.replace(/^@/, '')}`;
+  xLink.textContent = `X: ${x}`;
+  xListItem.appendChild(xLink);
+  container.appendChild(xListItem);
+
+  var youtubeListItem = document.createElement('li');
+  var youtubeLink = document.createElement('a');
+  youtubeLink.href = `https://www.youtube.com/${youtube}`;
+  youtubeLink.textContent = `YouTube: ${youtube}`;
+  youtubeListItem.appendChild(youtubeLink);
+  container.appendChild(youtubeListItem);
+}
+
 async function main() {
   const keyToMember = await loadMembers();
   createMemberLink(keyToMember);
 
-  const memberName = getMemberKey();
+  const memberName = getMemberKey(Object.keys(keyToMember));
   
-  console.log(memberName);
   if (memberName) {
     const categoryToFilenames = await loadFilenames(memberName);
+    setMemberName(keyToMember[memberName]['name']);
     createButtons(memberName, categoryToFilenames);
+    createLinks(keyToMember[memberName]);
   } else {
     hideMemberContent();
   }
