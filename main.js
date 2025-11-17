@@ -2,24 +2,24 @@ const FILE_PREFIX = "https://pub-4b13c7fd75994c589dfcb821cf58f84b.r2.dev"
 
 async function loadFilenames(memberName) {
 
-  const text = `
-1_あいさつ,ありがとうございます！.mp3
-3_その他,あーいーうーえーおー.mp3
-3_その他,あーん.mp3
-3_その他,おい！くじだよ！.mp3
-1_あいさつ,きこえておりますでしょうか.mp3
-1_あいさつ,きこえてますかー.mp3
-3_その他,きづいてよ！.mp3
-3_その他,ばか.mp3
-1_あいさつ,ぱにゃにゃんだー.mp3
-1_あいさつ,みなのしゅぱにゃにゃんだー.mp3
-2_かわいい,みぷちおねえさんだよ.mp3
-1_あいさつ,よろしくおねがいしまーす.mp3
-1_あいさつ,スーパーチャットありがとうございます.mp3
-1_あいさつ,雑談リレー務めさせていただきます.mp3
-`;
+//   const text = `
+// 1_あいさつ,ありがとうございます！.mp3
+// 3_その他,あーいーうーえーおー.mp3
+// 3_その他,あーん.mp3
+// 3_その他,おい！くじだよ！.mp3
+// 1_あいさつ,きこえておりますでしょうか.mp3
+// 1_あいさつ,きこえてますかー.mp3
+// 3_その他,きづいてよ！.mp3
+// 3_その他,ばか.mp3
+// 1_あいさつ,ぱにゃにゃんだー.mp3
+// 1_あいさつ,みなのしゅぱにゃにゃんだー.mp3
+// 2_かわいい,みぷちおねえさんだよ.mp3
+// 1_あいさつ,よろしくおねがいしまーす.mp3
+// 1_あいさつ,スーパーチャットありがとうございます.mp3
+// 1_あいさつ,雑談リレー務めさせていただきます.mp3
+// `;
 
-  // const text = await fetch(`${memberName}.csv`).then(res => res.text());
+  const text = await fetch(`${memberName}.csv`).then(res => res.text());
   const lines = text
     .split(/\r?\n/)
     .map(line => line.trim())
@@ -72,10 +72,10 @@ function createButtons(memberName, categoryToFilenames) {
 }
 
 async function loadMembers() {
-  const text = `
-mipu,甘苺みぷ  
-`
-  // const text = await fetch(`members.csv`).then(res => res.text());
+//   const text = `
+// mipu,甘苺みぷ  
+// `
+  const text = await fetch(`members.csv`).then(res => res.text());
   const lines = text
     .split(/\r?\n/)
     .map(line => line.trim())
