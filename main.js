@@ -46,6 +46,13 @@ function getVolume() {
   return volume ?? 0.3;
 }
 
+function getAsyncPlay() {
+  const asyncPlay = document.getElementById('toggle-async-play').checked;
+  return asyncPlay;
+}
+
+var prevPlayAudioObject = null;
+
 function createButtons(memberName, categoryToFilenames) {
   var container = document.getElementById('buttons');
   keys = Object.keys(categoryToFilenames);
@@ -68,6 +75,15 @@ function createButtons(memberName, categoryToFilenames) {
         path = `${FILE_PREFIX}/${memberName}/${filename}`
         var audio = new Audio(path);
         audio.volume = getVolume();
+
+        if (!getAsyncPlay()) {
+          if (prevPlayAudioObject) {
+            prevPlayAudioObject.pause();
+            prevPlayAudioObject.currentTime = 0;
+          }
+          prevPlayAudioObject = audio;
+        }
+
         audio.play();
       };
       container.appendChild(button);
