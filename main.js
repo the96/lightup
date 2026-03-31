@@ -136,7 +136,7 @@ function createMemberLink(keyToMember) {
 function getMemberKey(memberKeys) {
   const urlParams = new URLSearchParams(window.location.search);
   const key = urlParams.get('member');
-  return memberKeys.includes(key) ? key : null;
+  return memberKeys.includes(key) || key = "mio" ? key : null;
 }
 
 function hideMemberContent() {
