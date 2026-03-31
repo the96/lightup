@@ -159,14 +159,22 @@ function createLinks(member) {
   var xListItem = document.createElement('li');
   var xLink = document.createElement('a');
   xLink.href = `https://x.com/${x.replace(/^@/, '')}`;
-  xLink.textContent = `X: ${x}`;
+  if (name="ミオ") {
+    xLink.textContent = xLink.href;
+  } else {
+    xLink.textContent = `X: ${x}`;
+  }
   xListItem.appendChild(xLink);
   container.appendChild(xListItem);
 
   var youtubeListItem = document.createElement('li');
   var youtubeLink = document.createElement('a');
   youtubeLink.href = `https://www.youtube.com/${youtube}`;
-  youtubeLink.textContent = `YouTube: ${youtube}`;
+  if (name="ミオ") {
+    youtubeLink.textContent = youtubeLink.href;
+  } else {
+    youtubeLink.textContent = `YouTube: ${youtube}`;
+  }
   youtubeListItem.appendChild(youtubeLink);
   container.appendChild(youtubeListItem);
 }
@@ -176,15 +184,28 @@ async function main() {
   createMemberLink(keyToMember);
 
   const memberName = getMemberKey(Object.keys(keyToMember));
-  
+
+  if (memberName == "mio") {
+    const categoryToFilenames = await loadFilenames(memberName);
+    setMemberName("ミオ");
+    createButtons(memberName, categoryToFilenames);
+    createLinks({
+      name: "ミオ",
+      x: "amaimipu/status/2038907255303876851",
+      youtube: "live/-sPJX5WuPDM"
+    });
+    return;
+  }
+
   if (memberName) {
     const categoryToFilenames = await loadFilenames(memberName);
     setMemberName(keyToMember[memberName]['name']);
     createButtons(memberName, categoryToFilenames);
     createLinks(keyToMember[memberName]);
-  } else {
-    hideMemberContent();
+    return;
   }
+
+  hideMemberContent();
 }
 
 main().then();
