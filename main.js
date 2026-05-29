@@ -136,7 +136,7 @@ function createMemberLink(keyToMember) {
 function getMemberKey(memberKeys) {
   const urlParams = new URLSearchParams(window.location.search);
   const key = urlParams.get('member');
-  return memberKeys.includes(key) || key == "mio" ? key : null;
+  return memberKeys.includes(key) ? key : null;
 }
 
 function hideMemberContent() {
@@ -159,22 +159,14 @@ function createLinks(member) {
   var xListItem = document.createElement('li');
   var xLink = document.createElement('a');
   xLink.href = `https://x.com/${x.replace(/^@/, '')}`;
-  if (name="ミオ") {
-    xLink.textContent = xLink.href;
-  } else {
-    xLink.textContent = `X: ${x}`;
-  }
+  xLink.textContent = `X: ${x}`;
   xListItem.appendChild(xLink);
   container.appendChild(xListItem);
 
   var youtubeListItem = document.createElement('li');
   var youtubeLink = document.createElement('a');
   youtubeLink.href = `https://www.youtube.com/${youtube}`;
-  if (name="ミオ") {
-    youtubeLink.textContent = youtubeLink.href;
-  } else {
-    youtubeLink.textContent = `YouTube: ${youtube}`;
-  }
+  youtubeLink.textContent = `YouTube: ${youtube}`;
   youtubeListItem.appendChild(youtubeLink);
   container.appendChild(youtubeListItem);
 }
@@ -184,18 +176,6 @@ async function main() {
   createMemberLink(keyToMember);
 
   const memberName = getMemberKey(Object.keys(keyToMember));
-
-  if (memberName == "mio") {
-    const categoryToFilenames = await loadFilenames(memberName);
-    setMemberName("ミオ");
-    createButtons(memberName, categoryToFilenames);
-    createLinks({
-      name: "ミオ",
-      x: "amaimipu/status/2038907255303876851",
-      youtube: "live/-sPJX5WuPDM"
-    });
-    return;
-  }
 
   if (memberName) {
     const categoryToFilenames = await loadFilenames(memberName);
